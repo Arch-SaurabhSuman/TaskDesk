@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Operation Daemon Wolf — Task Manager</title>
+<style>
+  body { font-family: monospace; background:#0d1117; color:#c9d1d9; max-width:600px; margin:40px auto; padding:0 20px; }
+  h1 { color:#58a6ff; }
+  input { padding:8px; width:70%; background:#161b22; border:1px solid #30363d; color:#fff; }
+  button { padding:8px 14px; background:#238636; color:white; border:none; cursor:pointer; }
+  li { list-style:none; padding:10px; margin:6px 0; background:#161b22; border-left:3px solid #30363d; display:flex; justify-content:space-between; }
+  .done { text-decoration:line-through; color:#8b949e; border-left-color:#238636 !important; }
+  .del { background:#da3633; margin-left:8px; }
+</style>
+</head>
+<body>
+  <h1>🐺 Daemon Wolf — Tasks</h1>
+  <input id="title" placeholder="Nayi task likho...">
+  <button onclick="addTask()">Add</button>
+  <ul id="list"></ul>
+
+<script>
+// Frontend ka kaam sirf ITNA hai: user input lena, API ko call karna,
+// aur response ko screen par dikhana. Koi business logic yahan NAHI hai.
+const API = "/api/tasks";
+
+async function loadTasks() {
+  const res = await fetch(API);
+  const tasks = await res.json();
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  tasks.forEach(t => {
+    const li = document.createElement("li");
+    li.className = t.done ? "done" : "";
+    li.innerHTML = `<span onclick="toggleTask(${t.id})" style="cursor:pointer">${t.title}</span>
+                     <button class="del" onclick="deleteTask(${t.id})">✕</button>`;
+    list.appendChild(li);
+  });
+}
+
+async function addTask() {
+  const input = document.getElementById("title");
+  if (!input.value.trim()) return;
+  await fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: input.value })
+  });
+  input.value = "";
+  loadTasks();
+}
+
+async function toggleTask(id) {
+  await fetch(`${API}/${id}`, { method: "PATCH" });
+  loadTasks();
+}
+
+async function deleteTask(id) {
+  await fetch(`${API}/${id}`, { method: "DELETE" });
+  loadTasks();
+}
+
+loadTasks();
+</script>
+</body>
+</html>
