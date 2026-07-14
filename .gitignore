@@ -1,0 +1,13 @@
+# Environment
+
+.env
+
+# Go Binaries
+backend/main
+backend/*.exe
+
+#logs
+*.log
+
+# OS
+Thumbs.db

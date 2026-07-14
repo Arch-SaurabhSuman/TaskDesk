@@ -1,0 +1,8 @@
+.git
+.gitignore
+
+Thumbs.db
+
+.env
+*.log
+*.md
