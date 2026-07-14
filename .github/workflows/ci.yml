@@ -21,5 +21,6 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
+          context: ./frontend
           tags: ${{ vars.DOCKERHUB_USERNAME }}/taskdesk-frontend:latest
        
